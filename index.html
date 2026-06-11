@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpeedTest – Connection Speed Test</title>
+  <meta name="description" content="Test your internet connection speed. Measure download, upload, ping and jitter in seconds.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:       #0A0A0F;
+      --surface:  #111118;
+      --border:   rgba(255,255,255,0.08);
+      --border2:  rgba(255,255,255,0.14);
+      --text:     #E8E8F0;
+      --muted:    #6B6B80;
+      --blue:     #3B82F6;
+      --blue-dim: rgba(59,130,246,0.12);
+      --green:    #22C55E;
+      --amber:    #F59E0B;
+      --red:      #EF4444;
+      --radius:   12px;
+      --radius-sm:8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5vw;
+      height: 56px;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+    .logo span { color: var(--blue); }
+    .nav-tag {
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* ── MAIN ── */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 5vw;
+      gap: 2rem;
+    }
+
+    /* ── GAUGE ── */
+    .gauge-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .gauge-container {
+      position: relative;
+      width: 280px;
+      height: 160px;
+    }
+    .gauge-container svg {
+      width: 280px;
+      height: 160px;
+    }
+    #gaugeTrack {
+      stroke: rgba(255,255,255,0.06);
+    }
+    #gaugeArc {
+      stroke: var(--blue);
+      transition: stroke-dashoffset 0.12s linear, stroke 0.3s;
+    }
+    .gauge-center {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      white-space: nowrap;
+    }
+    #gaugeVal {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+    #gaugeUnit {
+      font-size: 0.8rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    #gaugeLabel {
+      font-size: 0.8rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      min-height: 1.2em;
+    }
+    .tick-labels {
+      display: flex;
+      justify-content: space-between;
+      width: 240px;
+      font-size: 0.7rem;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: -4px;
+    }
+
+    /* ── PHASE PILLS ── */
+    .phases {
+      display: flex;
+      gap: 8px;
+    }
+    .phase-pill {
+      font-size: 0.72rem;
+      padding: 4px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border2);
+      color: var(--muted);
+      background: transparent;
+      letter-spacing: 0.04em;
+      transition: all 0.2s;
+    }
+    .phase-pill.active {
+      border-color: var(--blue);
+      color: var(--blue);
+      background: var(--blue-dim);
+    }
+    .phase-pill.done {
+      border-color: rgba(34,197,94,0.3);
+      color: var(--green);
+      background: rgba(34,197,94,0.08);
+    }
+
+    /* ── METRICS ── */
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      width: 100%;
+      max-width: 560px;
+    }
+    .metric {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      text-align: center;
+    }
+    .metric-icon {
+      font-size: 1rem;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .metric-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+    }
+    .metric-lbl {
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 5px;
+    }
+
+    /* ── SPARK CHART ── */
+    .chart-wrap {
+      width: 100%;
+      max-width: 560px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+    }
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .chart-lbl {
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    #sparkCanvas {
+      width: 100%;
+      height: 56px;
+      display: block;
+    }
+
+    /* ── BUTTON ── */
+    .btn-wrap {
+      width: 100%;
+      max-width: 560px;
+    }
+    #btnStart {
+      width: 100%;
+      padding: 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      background: transparent;
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    #btnStart:hover:not(:disabled) {
+      background: rgba(255,255,255,0.04);
+      border-color: rgba(255,255,255,0.25);
+    }
+    #btnStart:active:not(:disabled) { transform: scale(0.99); }
+    #btnStart:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── RESULT CARDS ── */
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      width: 100%;
+      max-width: 560px;
+    }
+    .result-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1rem;
+      text-align: center;
+      display: none;
+    }
+    .result-card.visible { display: block; }
+    .rc-icon { font-size: 1.2rem; margin-bottom: 8px; }
+    .rc-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.8rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .rc-unit { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+    .rc-lbl { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 6px; }
+    .rc-dl { color: var(--blue); }
+    .rc-ul { color: var(--green); }
+    .rc-ping { color: var(--amber); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1rem 5vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+
+    /* ── INFO SECTION ── */
+    .info-section {
+      width: 100%;
+      max-width: 560px;
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .info-item { text-align: center; }
+    .info-term {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+    .info-def { font-size: 0.82rem; color: var(--text); line-height: 1.5; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 480px) {
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .results-grid { grid-template-columns: repeat(3, 1fr); }
+      .info-section { grid-template-columns: 1fr; }
+      #gaugeVal { font-size: 2.4rem; }
+    }
+
+    /* Spinner animation */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin { display: inline-block; animation: spin 1s linear infinite; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="#" class="logo">speed<span>.</span>test</a>
+    <span class="nav-tag">Connection speed</span>
+  </nav>
+
+  <main>
+
+    <!-- Gauge -->
+    <div class="gauge-section">
+      <div class="gauge-container">
+        <svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg">
+          <!-- Track -->
+          <path id="gaugeTrack"
+            d="M24 148 A116 116 0 0 1 256 148"
+            fill="none" stroke-width="10" stroke-linecap="round"/>
+          <!-- Arc -->
+          <path id="gaugeArc"
+            d="M24 148 A116 116 0 0 1 256 148"
+            fill="none" stroke-width="10" stroke-linecap="round"
+            stroke-dasharray="364" stroke-dashoffset="364"/>
+          <!-- Tick marks -->
+          <g stroke="rgba(255,255,255,0.1)" stroke-width="1">
+            <line x1="140" y1="32" x2="140" y2="22"/>
+            <line x1="24" y1="148" x2="14" y2="148"/>
+            <line x1="256" y1="148" x2="266" y2="148"/>
+            <line x1="57" y1="57" x2="50" y2="50"/>
+            <line x1="223" y1="57" x2="230" y2="50"/>
+          </g>
+        </svg>
+        <div class="gauge-center">
+          <div id="gaugeVal">—</div>
+          <div id="gaugeUnit">Mbps</div>
+        </div>
+      </div>
+      <div class="tick-labels">
+        <span>0</span>
+        <span>250</span>
+        <span>500</span>
+        <span>750</span>
+        <span>1000</span>
+      </div>
+      <div id="gaugeLabel">Ready to test</div>
+    </div>
+
+    <!-- Phase pills -->
+    <div class="phases">
+      <div class="phase-pill" id="ph-ping">Ping</div>
+      <div class="phase-pill" id="ph-dl">Download</div>
+      <div class="phase-pill" id="ph-ul">Upload</div>
+    </div>
+
+    <!-- Metrics -->
+    <div class="metrics">
+      <div class="metric">
+        <span class="metric-icon">↓</span>
+        <div class="metric-val" id="mDl">—</div>
+        <div class="metric-lbl">Download</div>
+      </div>
+      <div class="metric">
+        <span class="metric-icon">↑</span>
+        <div class="metric-val" id="mUl">—</div>
+        <div class="metric-lbl">Upload</div>
+      </div>
+      <div class="metric">
+        <span class="metric-icon">◎</span>
+        <div class="metric-val" id="mPing">—</div>
+        <div class="metric-lbl">Ping ms</div>
+      </div>
+      <div class="metric">
+        <span class="metric-icon">≈</span>
+        <div class="metric-val" id="mJitter">—</div>
+        <div class="metric-lbl">Jitter ms</div>
+      </div>
+    </div>
+
+    <!-- Spark chart -->
+    <div class="chart-wrap">
+      <div class="chart-header">
+        <span class="chart-lbl">Live speed</span>
+        <span class="chart-lbl" id="chartPhaseLabel">—</span>
+      </div>
+      <canvas id="sparkCanvas" height="56"></canvas>
+    </div>
+
+    <!-- Button -->
+    <div class="btn-wrap">
+      <button id="btnStart" onclick="startTest()">
+        ▶ &nbsp;Start test
+      </button>
+    </div>
+
+    <!-- Final result cards (shown after test) -->
+    <div class="results-grid" id="resultsGrid">
+      <div class="result-card" id="rcDl">
+        <div class="rc-icon">↓</div>
+        <div class="rc-val rc-dl" id="rcDlVal">—</div>
+        <div class="rc-unit">Mbps</div>
+        <div class="rc-lbl">Download</div>
+      </div>
+      <div class="result-card" id="rcUl">
+        <div class="rc-icon">↑</div>
+        <div class="rc-val rc-ul" id="rcUlVal">—</div>
+        <div class="rc-unit">Mbps</div>
+        <div class="rc-lbl">Upload</div>
+      </div>
+      <div class="result-card" id="rcPing">
+        <div class="rc-icon">◎</div>
+        <div class="rc-val rc-ping" id="rcPingVal">—</div>
+        <div class="rc-unit">ms</div>
+        <div class="rc-lbl">Ping</div>
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div class="info-section">
+      <div class="info-item">
+        <div class="info-term">Download</div>
+        <div class="info-def">Speed when receiving data — affects streaming and browsing</div>
+      </div>
+      <div class="info-item">
+        <div class="info-term">Upload</div>
+        <div class="info-def">Speed when sending data — affects video calls and file uploads</div>
+      </div>
+      <div class="info-item">
+        <div class="info-term">Ping / Jitter</div>
+        <div class="info-def">Latency and variation — the lower, the more stable your connection</div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <span>Measured via Cloudflare Speed — real data from your connection</span>
+    <span>
+      <a href="privacy-policy.html">Privacy</a> ·
+      <a href="terms-of-use.html">Terms</a>
+    </span>
+  </footer>
+
+  <script>
+    const ARC_LEN = 364;
+    const MAX_MBPS = 1000;
+
+    function setGauge(val, color) {
+      const pct = Math.min(val / MAX_MBPS, 1);
+      const offset = ARC_LEN - pct * ARC_LEN;
+      const arc = document.getElementById('gaugeArc');
+      arc.style.strokeDashoffset = offset.toFixed(1);
+      if (color) arc.style.stroke = color;
+      const display = val === 0 ? '0' : val < 1 ? val.toFixed(1) : Math.round(val);
+      document.getElementById('gaugeVal').textContent = display;
+    }
+
+    function rateColor(mbps) {
+      if (mbps >= 100) return '#3B82F6';
+      if (mbps >= 25)  return '#22C55E';
+      if (mbps >= 5)   return '#F59E0B';
+      return '#EF4444';
+    }
+
+    function setPhase(active) {
+      ['ping', 'dl', 'ul'].forEach((p, i) => {
+        const el = document.getElementById('ph-' + p);
+        const phases = ['ping', 'dl', 'ul'];
+        const idx = phases.indexOf(active);
+        el.classList.remove('active', 'done');
+        if (i < idx) el.classList.add('done');
+        if (i === idx) el.classList.add('active');
+      });
+    }
+
+    function donePhase(name) {
+      const el = document.getElementById('ph-' + name);
+      el.classList.remove('active');
+      el.classList.add('done');
+    }
+
+    let sparkData = [];
+    let sparkCtx = null;
+    let dpr = window.devicePixelRatio || 1;
+
+    function initSpark() {
+      const canvas = document.getElementById('sparkCanvas');
+      const w = canvas.offsetWidth;
+      canvas.width = w * dpr;
+      canvas.height = 56 * dpr;
+      sparkCtx = canvas.getContext('2d');
+      sparkData = [];
+    }
+
+    function pushSpark(val) {
+      sparkData.push(val);
+      if (sparkData.length > 80) sparkData.shift();
+      drawSpark();
+    }
+
+    function drawSpark() {
+      if (!sparkCtx || sparkData.length < 2) return;
+      const w = sparkCtx.canvas.width;
+      const h = sparkCtx.canvas.height;
+      sparkCtx.clearRect(0, 0, w, h);
+      const max = Math.max(...sparkData, 1);
+      const step = w / (sparkData.length - 1);
+
+      sparkCtx.beginPath();
+      sparkData.forEach((v, i) => {
+        const x = i * step;
+        const y = h - (v / max) * h * 0.88 - h * 0.06;
+        i === 0 ? sparkCtx.moveTo(x, y) : sparkCtx.lineTo(x, y);
+      });
+      sparkCtx.strokeStyle = '#3B82F6';
+      sparkCtx.lineWidth = 2 * dpr;
+      sparkCtx.lineJoin = 'round';
+      sparkCtx.lineCap = 'round';
+      sparkCtx.stroke();
+
+      // Area fill
+      sparkCtx.lineTo(w, h);
+      sparkCtx.lineTo(0, h);
+      sparkCtx.closePath();
+      sparkCtx.fillStyle = 'rgba(59,130,246,0.07)';
+      sparkCtx.fill();
+    }
+
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    async function measurePing() {
+      const times = [];
+      for (let i = 0; i < 6; i++) {
+        const t0 = performance.now();
+        try {
+          await fetch('https://www.cloudflare.com/cdn-cgi/trace?_=' + Date.now(), {
+            mode: 'no-cors', cache: 'no-store'
+          });
+        } catch (e) {}
+        times.push(performance.now() - t0);
+        await sleep(100);
+      }
+      times.sort((a, b) => a - b);
+      const trimmed = times.slice(1, 5);
+      const ping = trimmed.reduce((a, b) => a + b, 0) / trimmed.length;
+      const jitter = Math.abs(trimmed[trimmed.length - 1] - trimmed[0]) / 2;
+      return { ping: Math.round(ping), jitter: Math.round(jitter) };
+    }
+
+    async function measureDownload(onProgress) {
+      const DURATION = 7000;
+      const CHUNK = 1024 * 1024 * 4;
+      let totalBytes = 0;
+      const t0 = performance.now();
+      let running = true;
+
+      async function fetchChunk() {
+        while (running && (performance.now() - t0) < DURATION) {
+          try {
+            const r = await fetch(
+              'https://speed.cloudflare.com/__down?bytes=' + CHUNK + '&_=' + Math.random(),
+              { cache: 'no-store' }
+            );
+            const buf = await r.arrayBuffer();
+            totalBytes += buf.byteLength;
+            const elapsed = (performance.now() - t0) / 1000;
+            onProgress((totalBytes * 8) / (elapsed * 1e6));
+          } catch (e) { await sleep(200); }
+        }
+      }
+
+      await Promise.race([
+        Promise.all([fetchChunk(), fetchChunk(), fetchChunk(), fetchChunk()]),
+        sleep(DURATION + 1000)
+      ]);
+      running = false;
+      const elapsed = (performance.now() - t0) / 1000;
+      return (totalBytes * 8) / (elapsed * 1e6);
+    }
+
+    async function measureUpload(onProgress) {
+      const DURATION = 6000;
+      const CHUNK = 1024 * 512;
+      const payload = new Uint8Array(CHUNK);
+      let totalBytes = 0;
+      const t0 = performance.now();
+      let running = true;
+
+      async function sendChunk() {
+        while (running && (performance.now() - t0) < DURATION) {
+          try {
+            await fetch('https://speed.cloudflare.com/__up', {
+              method: 'POST',
+              body: payload,
+              headers: { 'Content-Type': 'application/octet-stream' },
+              cache: 'no-store'
+            });
+            totalBytes += CHUNK;
+            const elapsed = (performance.now() - t0) / 1000;
+            onProgress((totalBytes * 8) / (elapsed * 1e6));
+          } catch (e) { await sleep(200); }
+        }
+      }
+
+      await Promise.race([
+        Promise.all([sendChunk(), sendChunk(), sendChunk()]),
+        sleep(DURATION + 1000)
+      ]);
+      running = false;
+      const elapsed = (performance.now() - t0) / 1000;
+      return (totalBytes * 8) / (elapsed * 1e6);
+    }
+
+    function fmt(v) {
+      return v < 1 ? v.toFixed(1) : Math.round(v);
+    }
+
+    let tickInterval = null;
+
+    async function startTest() {
+      const btn = document.getElementById('btnStart');
+      btn.disabled = true;
+      btn.textContent = '◌  Testing...';
+
+      // Reset UI
+      ['mDl', 'mUl', 'mPing', 'mJitter'].forEach(id => {
+        document.getElementById(id).textContent = '—';
+      });
+      document.getElementById('rcDl').classList.remove('visible');
+      document.getElementById('rcUl').classList.remove('visible');
+      document.getElementById('rcPing').classList.remove('visible');
+      document.getElementById('gaugeArc').style.stroke = '#3B82F6';
+      initSpark();
+
+      try {
+        // ── PING ──
+        setPhase('ping');
+        document.getElementById('gaugeLabel').textContent = 'Measuring latency...';
+        document.getElementById('gaugeUnit').textContent = 'ms';
+        document.getElementById('gaugeVal').textContent = '…';
+        document.getElementById('chartPhaseLabel').textContent = 'Ping';
+
+        const { ping, jitter } = await measurePing();
+        document.getElementById('mPing').textContent = ping;
+        document.getElementById('mJitter').textContent = jitter;
+        document.getElementById('rcPingVal').textContent = ping;
+        document.getElementById('rcPing').classList.add('visible');
+        setGauge(Math.min(ping, 1000), '#F59E0B');
+        donePhase('ping');
+        await sleep(400);
+
+        // ── DOWNLOAD ──
+        setPhase('dl');
+        document.getElementById('gaugeLabel').textContent = 'Measuring download...';
+        document.getElementById('gaugeUnit').textContent = 'Mbps';
+        document.getElementById('chartPhaseLabel').textContent = 'Download';
+        setGauge(0, '#3B82F6');
+        sparkData = [];
+
+        let dlLive = 0;
+        tickInterval = setInterval(() => {
+          setGauge(dlLive, rateColor(dlLive));
+          pushSpark(dlLive);
+          document.getElementById('mDl').textContent = fmt(dlLive);
+        }, 150);
+
+        const dlFinal = await measureDownload(v => { dlLive = v; });
+        clearInterval(tickInterval);
+        setGauge(dlFinal, rateColor(dlFinal));
+        document.getElementById('mDl').textContent = fmt(dlFinal);
+        document.getElementById('rcDlVal').textContent = fmt(dlFinal);
+        document.getElementById('rcDl').classList.add('visible');
+        donePhase('dl');
+        await sleep(400);
+
+        // ── UPLOAD ──
+        setPhase('ul');
+        document.getElementById('gaugeLabel').textContent = 'Measuring upload...';
+        document.getElementById('chartPhaseLabel').textContent = 'Upload';
+        setGauge(0, '#22C55E');
+        sparkData = [];
+
+        let ulLive = 0;
+        tickInterval = setInterval(() => {
+          setGauge(ulLive, '#22C55E');
+          pushSpark(ulLive);
+          document.getElementById('mUl').textContent = fmt(ulLive);
+        }, 150);
+
+        const ulFinal = await measureUpload(v => { ulLive = v; });
+        clearInterval(tickInterval);
+        setGauge(ulFinal, '#22C55E');
+        document.getElementById('mUl').textContent = fmt(ulFinal);
+        document.getElementById('rcUlVal').textContent = fmt(ulFinal);
+        document.getElementById('rcUl').classList.add('visible');
+        donePhase('ul');
+
+        document.getElementById('gaugeLabel').textContent = 'Test complete';
+        document.getElementById('gaugeUnit').textContent = 'Mbps';
+        document.getElementById('chartPhaseLabel').textContent = 'Complete';
+
+      } catch (e) {
+        clearInterval(tickInterval);
+        document.getElementById('gaugeLabel').textContent = 'Error — check your connection';
+        document.getElementById('gaugeVal').textContent = '!';
+      }
+
+      btn.disabled = false;
+      btn.textContent = '↺  Test again';
+    }
+  </script>
+
+</body>
+</html>
