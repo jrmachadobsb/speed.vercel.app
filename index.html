@@ -3,8 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SpeedTest – Connection Speed Test</title>
-  <meta name="description" content="Test your internet connection speed. Measure download, upload, ping and jitter in seconds.">
+  <title>NetSpeed – Free Internet Speed Test | Check Download & Upload</title>
+  <meta name="description" content="Test your internet connection speed for free. Measure download speed, upload speed, ping, and jitter in seconds. No app required.">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="NetSpeed – Free Internet Speed Test">
+  <meta property="og:description" content="Check your download speed, upload speed, ping and jitter instantly. Free, accurate, no sign-up required.">
+  <meta property="og:type" content="website">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -12,6 +16,7 @@
     :root {
       --bg:       #0A0A0F;
       --surface:  #111118;
+      --surface2: #17171F;
       --border:   rgba(255,255,255,0.08);
       --border2:  rgba(255,255,255,0.14);
       --text:     #E8E8F0;
@@ -24,11 +29,8 @@
       --radius:   12px;
       --radius-sm:8px;
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     html { scroll-behavior: smooth; }
-
     body {
       font-family: 'Inter', sans-serif;
       background: var(--bg);
@@ -36,323 +38,272 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      line-height: 1.6;
     }
 
-    /* ── NAV ── */
+    /* NAV */
     nav {
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 5vw;
-      height: 56px;
+      height: 58px;
       border-bottom: 1px solid var(--border);
     }
     .logo {
       font-family: 'JetBrains Mono', monospace;
       font-weight: 700;
-      font-size: 1rem;
+      font-size: 1.05rem;
       color: var(--text);
       text-decoration: none;
-      letter-spacing: -0.02em;
     }
     .logo span { color: var(--blue); }
-    .nav-tag {
-      font-size: 0.75rem;
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+    .nav-links a {
       color: var(--muted);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 3rem 5vw 1.5rem;
+    }
+    .hero h1 {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      margin-bottom: 10px;
+    }
+    .hero p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 480px;
+      margin: 0 auto;
     }
 
-    /* ── MAIN ── */
-    main {
-      flex: 1;
+    /* TOOL AREA */
+    .tool-area {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 3rem 5vw;
-      gap: 2rem;
+      padding: 1rem 5vw 2rem;
+      gap: 1.25rem;
     }
 
-    /* ── GAUGE ── */
+    /* GAUGE */
     .gauge-section {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 0.5rem;
     }
-    .gauge-container {
-      position: relative;
-      width: 280px;
-      height: 160px;
-    }
-    .gauge-container svg {
-      width: 280px;
-      height: 160px;
-    }
-    #gaugeTrack {
-      stroke: rgba(255,255,255,0.06);
-    }
-    #gaugeArc {
-      stroke: var(--blue);
-      transition: stroke-dashoffset 0.12s linear, stroke 0.3s;
-    }
+    .gauge-container { position: relative; width: 280px; height: 160px; }
+    .gauge-container svg { width: 280px; height: 160px; }
+    #gaugeTrack { stroke: rgba(255,255,255,0.06); }
+    #gaugeArc { stroke: var(--blue); transition: stroke-dashoffset 0.12s linear, stroke 0.3s; }
     .gauge-center {
-      position: absolute;
-      bottom: 8px;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      white-space: nowrap;
+      position: absolute; bottom: 8px; left: 50%;
+      transform: translateX(-50%); text-align: center; white-space: nowrap;
     }
     #gaugeVal {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 3rem;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1;
-      letter-spacing: -0.04em;
+      font-size: 3rem; font-weight: 700;
+      color: var(--text); line-height: 1; letter-spacing: -0.04em;
     }
-    #gaugeUnit {
-      font-size: 0.8rem;
-      color: var(--muted);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-top: 4px;
-    }
-    #gaugeLabel {
-      font-size: 0.8rem;
-      color: var(--muted);
-      letter-spacing: 0.05em;
-      min-height: 1.2em;
-    }
+    #gaugeUnit { font-size: 0.8rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 4px; }
+    #gaugeLabel { font-size: 0.8rem; color: var(--muted); letter-spacing: 0.05em; min-height: 1.2em; }
     .tick-labels {
-      display: flex;
-      justify-content: space-between;
-      width: 240px;
-      font-size: 0.7rem;
-      color: var(--muted);
-      font-family: 'JetBrains Mono', monospace;
-      margin-top: -4px;
+      display: flex; justify-content: space-between; width: 240px;
+      font-size: 0.7rem; color: var(--muted);
+      font-family: 'JetBrains Mono', monospace; margin-top: -4px;
     }
 
-    /* ── PHASE PILLS ── */
-    .phases {
-      display: flex;
-      gap: 8px;
-    }
+    /* PHASES */
+    .phases { display: flex; gap: 8px; }
     .phase-pill {
-      font-size: 0.72rem;
-      padding: 4px 14px;
-      border-radius: 20px;
-      border: 1px solid var(--border2);
-      color: var(--muted);
-      background: transparent;
-      letter-spacing: 0.04em;
-      transition: all 0.2s;
+      font-size: 0.72rem; padding: 4px 14px; border-radius: 20px;
+      border: 1px solid var(--border2); color: var(--muted);
+      background: transparent; letter-spacing: 0.04em; transition: all 0.2s;
     }
-    .phase-pill.active {
-      border-color: var(--blue);
-      color: var(--blue);
-      background: var(--blue-dim);
-    }
-    .phase-pill.done {
-      border-color: rgba(34,197,94,0.3);
-      color: var(--green);
-      background: rgba(34,197,94,0.08);
-    }
+    .phase-pill.active { border-color: var(--blue); color: var(--blue); background: var(--blue-dim); }
+    .phase-pill.done { border-color: rgba(34,197,94,0.3); color: var(--green); background: rgba(34,197,94,0.08); }
 
-    /* ── METRICS ── */
+    /* METRICS */
     .metrics {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      width: 100%;
-      max-width: 560px;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 10px; width: 100%; max-width: 560px;
     }
     .metric {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 1rem;
-      text-align: center;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 1rem; text-align: center;
     }
-    .metric-icon {
-      font-size: 1rem;
-      margin-bottom: 6px;
-      display: block;
-    }
+    .metric-icon { font-size: 1rem; margin-bottom: 6px; display: block; }
     .metric-val {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1;
+      font-size: 1.4rem; font-weight: 700; color: var(--text); line-height: 1;
     }
-    .metric-lbl {
-      font-size: 0.68rem;
-      color: var(--muted);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      margin-top: 5px;
-    }
+    .metric-lbl { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 5px; }
 
-    /* ── SPARK CHART ── */
+    /* CHART */
     .chart-wrap {
-      width: 100%;
-      max-width: 560px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1rem 1.25rem;
+      width: 100%; max-width: 560px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1rem 1.25rem;
     }
-    .chart-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .chart-lbl {
-      font-size: 0.72rem;
-      color: var(--muted);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-    #sparkCanvas {
-      width: 100%;
-      height: 56px;
-      display: block;
-    }
+    .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .chart-lbl { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+    #sparkCanvas { width: 100%; height: 56px; display: block; }
 
-    /* ── BUTTON ── */
-    .btn-wrap {
-      width: 100%;
-      max-width: 560px;
-    }
+    /* BUTTON */
+    .btn-wrap { width: 100%; max-width: 560px; }
     #btnStart {
-      width: 100%;
-      padding: 14px;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 500;
-      letter-spacing: 0.02em;
-      color: var(--text);
-      background: transparent;
-      border: 1px solid var(--border2);
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: background 0.15s, border-color 0.15s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+      width: 100%; padding: 14px;
+      font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 500;
+      letter-spacing: 0.02em; color: var(--text);
+      background: transparent; border: 1px solid var(--border2);
+      border-radius: var(--radius); cursor: pointer; transition: background 0.15s, border-color 0.15s;
     }
-    #btnStart:hover:not(:disabled) {
-      background: rgba(255,255,255,0.04);
-      border-color: rgba(255,255,255,0.25);
-    }
+    #btnStart:hover:not(:disabled) { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.25); }
     #btnStart:active:not(:disabled) { transform: scale(0.99); }
     #btnStart:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    /* ── RESULT CARDS ── */
-    .results-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      width: 100%;
-      max-width: 560px;
-    }
+    /* RESULT CARDS */
+    .results-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; max-width: 560px; }
     .result-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.25rem 1rem;
-      text-align: center;
-      display: none;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.25rem 1rem;
+      text-align: center; display: none;
     }
     .result-card.visible { display: block; }
     .rc-icon { font-size: 1.2rem; margin-bottom: 8px; }
-    .rc-val {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 1.8rem;
-      font-weight: 700;
-      line-height: 1;
-    }
+    .rc-val { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; line-height: 1; }
     .rc-unit { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
     .rc-lbl { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 6px; }
     .rc-dl { color: var(--blue); }
     .rc-ul { color: var(--green); }
     .rc-ping { color: var(--amber); }
 
-    /* ── FOOTER ── */
+    /* CONTENT SECTIONS */
+    .content-section {
+      max-width: 860px; margin: 0 auto;
+      padding: 3rem 5vw;
+      border-top: 1px solid var(--border);
+      width: 100%;
+    }
+    .content-section h2 {
+      font-size: 1.2rem; font-weight: 500;
+      letter-spacing: -0.02em; margin-bottom: 1rem;
+    }
+    .content-section p {
+      color: var(--muted); font-size: 0.9rem; line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+    .content-section p:last-child { margin-bottom: 0; }
+
+    /* INFO GRID */
+    .info-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 16px; margin-top: 1.5rem;
+    }
+    .info-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.25rem;
+    }
+    .info-card h3 { font-size: 0.85rem; font-weight: 500; margin-bottom: 8px; }
+    .info-card p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; margin: 0; }
+
+    /* FAQ */
+    .faq-list { display: flex; flex-direction: column; gap: 12px; margin-top: 1.5rem; }
+    .faq-item {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.25rem;
+    }
+    .faq-item h3 { font-size: 0.9rem; font-weight: 500; margin-bottom: 6px; }
+    .faq-item p { font-size: 0.85rem; color: var(--muted); line-height: 1.7; margin: 0; }
+
+    /* TIPS */
+    .tips-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 1.5rem; }
+    .tip-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.25rem;
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .tip-num {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+      color: var(--blue); font-weight: 700; flex-shrink: 0; margin-top: 2px;
+    }
+    .tip-card h3 { font-size: 0.85rem; font-weight: 500; margin-bottom: 4px; }
+    .tip-card p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; margin: 0; }
+
+    /* FOOTER */
     footer {
       border-top: 1px solid var(--border);
-      padding: 1rem 5vw;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.72rem;
-      color: var(--muted);
+      padding: 1.5rem 5vw;
+      margin-top: auto;
     }
-    footer a { color: var(--muted); text-decoration: none; }
-    footer a:hover { color: var(--text); }
+    .footer-top {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: 2rem; margin-bottom: 1.5rem; flex-wrap: wrap;
+    }
+    .footer-brand .logo { display: block; margin-bottom: 8px; }
+    .footer-brand p { font-size: 0.78rem; color: var(--muted); max-width: 280px; line-height: 1.6; }
+    .footer-col h4 { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+    .footer-col ul li a { font-size: 0.82rem; color: var(--muted); text-decoration: none; transition: color 0.15s; }
+    .footer-col ul li a:hover { color: var(--text); }
+    .footer-bottom {
+      border-top: 1px solid var(--border); padding-top: 1rem;
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.72rem; color: var(--muted); flex-wrap: wrap; gap: 8px;
+    }
+    .footer-bottom a { color: var(--muted); text-decoration: none; }
+    .footer-bottom a:hover { color: var(--text); }
 
-    /* ── INFO SECTION ── */
-    .info-section {
-      width: 100%;
-      max-width: 560px;
-      border-top: 1px solid var(--border);
-      padding-top: 1.5rem;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
-    .info-item { text-align: center; }
-    .info-term {
-      font-size: 0.72rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 4px;
-    }
-    .info-def { font-size: 0.82rem; color: var(--text); line-height: 1.5; }
-
-    /* ── MOBILE ── */
-    @media (max-width: 480px) {
+    /* MOBILE */
+    @media (max-width: 600px) {
       .metrics { grid-template-columns: repeat(2, 1fr); }
-      .results-grid { grid-template-columns: repeat(3, 1fr); }
-      .info-section { grid-template-columns: 1fr; }
+      .info-grid { grid-template-columns: 1fr; }
+      .tips-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .footer-top { flex-direction: column; gap: 1.5rem; }
       #gaugeVal { font-size: 2.4rem; }
     }
-
-    /* Spinner animation */
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .spin { display: inline-block; animation: spin 1s linear infinite; }
   </style>
 </head>
 <body>
 
+  <!-- NAV -->
   <nav>
-    <a href="#" class="logo">speed<span>.</span>test</a>
-    <span class="nav-tag">Connection speed</span>
+    <a href="index.html" class="logo">net<span>speed</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Speed Test</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="privacy-policy.html">Privacy</a></li>
+    </ul>
   </nav>
 
-  <main>
+  <!-- HERO -->
+  <div class="hero">
+    <h1>Internet Speed Test</h1>
+    <p>Check your real download speed, upload speed, ping, and jitter — free, in seconds, no sign-up needed.</p>
+  </div>
 
-    <!-- Gauge -->
+  <!-- TOOL -->
+  <div class="tool-area">
+
     <div class="gauge-section">
       <div class="gauge-container">
         <svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg">
-          <!-- Track -->
-          <path id="gaugeTrack"
-            d="M24 148 A116 116 0 0 1 256 148"
-            fill="none" stroke-width="10" stroke-linecap="round"/>
-          <!-- Arc -->
-          <path id="gaugeArc"
-            d="M24 148 A116 116 0 0 1 256 148"
-            fill="none" stroke-width="10" stroke-linecap="round"
-            stroke-dasharray="364" stroke-dashoffset="364"/>
-          <!-- Tick marks -->
+          <path id="gaugeTrack" d="M24 148 A116 116 0 0 1 256 148" fill="none" stroke-width="10" stroke-linecap="round"/>
+          <path id="gaugeArc" d="M24 148 A116 116 0 0 1 256 148" fill="none" stroke-width="10" stroke-linecap="round" stroke-dasharray="364" stroke-dashoffset="364"/>
           <g stroke="rgba(255,255,255,0.1)" stroke-width="1">
             <line x1="140" y1="32" x2="140" y2="22"/>
             <line x1="24" y1="148" x2="14" y2="148"/>
@@ -366,24 +317,16 @@
           <div id="gaugeUnit">Mbps</div>
         </div>
       </div>
-      <div class="tick-labels">
-        <span>0</span>
-        <span>250</span>
-        <span>500</span>
-        <span>750</span>
-        <span>1000</span>
-      </div>
+      <div class="tick-labels"><span>0</span><span>250</span><span>500</span><span>750</span><span>1000</span></div>
       <div id="gaugeLabel">Ready to test</div>
     </div>
 
-    <!-- Phase pills -->
     <div class="phases">
       <div class="phase-pill" id="ph-ping">Ping</div>
       <div class="phase-pill" id="ph-dl">Download</div>
       <div class="phase-pill" id="ph-ul">Upload</div>
     </div>
 
-    <!-- Metrics -->
     <div class="metrics">
       <div class="metric">
         <span class="metric-icon">↓</span>
@@ -407,7 +350,6 @@
       </div>
     </div>
 
-    <!-- Spark chart -->
     <div class="chart-wrap">
       <div class="chart-header">
         <span class="chart-lbl">Live speed</span>
@@ -416,14 +358,10 @@
       <canvas id="sparkCanvas" height="56"></canvas>
     </div>
 
-    <!-- Button -->
     <div class="btn-wrap">
-      <button id="btnStart" onclick="startTest()">
-        ▶ &nbsp;Start test
-      </button>
+      <button id="btnStart" onclick="startTest()">▶ &nbsp;Start test</button>
     </div>
 
-    <!-- Final result cards (shown after test) -->
     <div class="results-grid" id="resultsGrid">
       <div class="result-card" id="rcDl">
         <div class="rc-icon">↓</div>
@@ -445,30 +383,155 @@
       </div>
     </div>
 
-    <!-- Info -->
-    <div class="info-section">
-      <div class="info-item">
-        <div class="info-term">Download</div>
-        <div class="info-def">Speed when receiving data — affects streaming and browsing</div>
+  </div>
+
+  <!-- CONTENT: What do these metrics mean -->
+  <div class="content-section">
+    <h2>What do these metrics mean?</h2>
+    <p>Understanding your speed test results helps you know whether your connection is right for your daily needs — from casual browsing to 4K streaming and competitive gaming.</p>
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>↓ Download Speed</h3>
+        <p>How fast your device receives data from the internet. Measured in Mbps. This affects streaming, loading websites, and downloading files. Most households need at least 25 Mbps for comfortable use.</p>
       </div>
-      <div class="info-item">
-        <div class="info-term">Upload</div>
-        <div class="info-def">Speed when sending data — affects video calls and file uploads</div>
+      <div class="info-card">
+        <h3>↑ Upload Speed</h3>
+        <p>How fast your device sends data to the internet. Important for video calls, live streaming, sending large files, and cloud backups. Usually lower than download on home connections.</p>
       </div>
-      <div class="info-item">
-        <div class="info-term">Ping / Jitter</div>
-        <div class="info-def">Latency and variation — the lower, the more stable your connection</div>
+      <div class="info-card">
+        <h3>◎ Ping &amp; Jitter</h3>
+        <p>Ping measures the round-trip delay between your device and a server (in ms). Jitter is the variation in that delay. Low ping and jitter are critical for gaming, VoIP, and video conferencing.</p>
       </div>
     </div>
+  </div>
 
-  </main>
+  <!-- CONTENT: What is a good speed -->
+  <div class="content-section">
+    <h2>What is a good internet speed?</h2>
+    <p>The right internet speed depends entirely on how you use it and how many devices are connected at once. Here are general guidelines:</p>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3>Basic browsing and email</h3>
+        <p>1–5 Mbps download is enough for light web browsing, reading emails, and social media with a single device. Most modern connections far exceed this minimum.</p>
+      </div>
+      <div class="faq-item">
+        <h3>HD and 4K video streaming</h3>
+        <p>Netflix recommends 5 Mbps for HD and 25 Mbps for Ultra HD (4K) per stream. If multiple people are streaming simultaneously, multiply accordingly. A household of 4 streaming 4K would ideally need 100+ Mbps.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Online gaming</h3>
+        <p>Bandwidth is less critical for gaming — most games only need 3–6 Mbps. What matters more is low ping (under 50ms is great, under 20ms is excellent) and stable jitter. A wired Ethernet connection helps significantly.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Working from home</h3>
+        <p>Video calls on Zoom or Teams typically need 3–5 Mbps upload per participant. If you're uploading large files or using cloud-based tools heavily, 20+ Mbps upload is recommended for a smooth experience.</p>
+      </div>
+    </div>
+  </div>
 
+  <!-- CONTENT: Tips to improve speed -->
+  <div class="content-section">
+    <h2>Tips to improve your connection speed</h2>
+    <p>If your results are lower than expected, these steps often help before calling your ISP.</p>
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-num">01</div>
+        <div>
+          <h3>Restart your router</h3>
+          <p>Power-cycling your router clears its memory and re-establishes a fresh connection to your ISP. Do this once a month as routine maintenance.</p>
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">02</div>
+        <div>
+          <h3>Use a wired connection</h3>
+          <p>An Ethernet cable always outperforms Wi-Fi in both speed and stability. If you're testing Wi-Fi, try running the test again with a cable to see the difference.</p>
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">03</div>
+        <div>
+          <h3>Move closer to your router</h3>
+          <p>Wi-Fi signal weakens with distance and through walls. Position your router centrally and elevate it off the floor for better coverage throughout your home.</p>
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">04</div>
+        <div>
+          <h3>Check for interference</h3>
+          <p>Microwaves, baby monitors, and neighboring Wi-Fi networks can interfere on the 2.4 GHz band. Switching to 5 GHz on your router usually helps if you're close to it.</p>
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">05</div>
+        <div>
+          <h3>Close background apps</h3>
+          <p>Other devices and apps using bandwidth during your test will lower your results. Close downloads, streaming, and cloud sync before running the test for accurate numbers.</p>
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">06</div>
+        <div>
+          <h3>Contact your ISP</h3>
+          <p>If speeds are consistently well below your plan's advertised rate (especially during off-peak hours), it may be time to contact your provider or consider upgrading your plan or equipment.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT: FAQ -->
+  <div class="content-section">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3>How accurate is this speed test?</h3>
+        <p>Our test measures real data transfer to and from Cloudflare's global network, which has servers close to most users worldwide. Results reflect actual network performance at the time of the test. For best accuracy, close other apps and run multiple tests at different times of day.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Why is my speed test result lower than my plan?</h3>
+        <p>ISPs advertise "up to" speeds under ideal conditions. Real-world speeds are affected by your router's age and quality, Wi-Fi signal strength, the number of connected devices, network congestion during peak hours, and the physical distance to your ISP's infrastructure.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Does the speed test use my data?</h3>
+        <p>Yes — the test transfers several megabytes of data to measure your speeds accurately. A typical test uses roughly 40–100 MB total. If you have a limited data plan, keep this in mind before running the test.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Should I test on Wi-Fi or Ethernet?</h3>
+        <p>Test on the connection you actually use day-to-day. If you want to know your router's true capacity, use an Ethernet cable. If you're troubleshooting Wi-Fi issues, test both and compare the difference.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
   <footer>
-    <span>Measured via Cloudflare Speed — real data from your connection</span>
-    <span>
-      <a href="privacy-policy.html">Privacy</a> ·
-      <a href="terms-of-use.html">Terms</a>
-    </span>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">net<span>speed</span></a>
+        <p>A free, accurate internet speed test tool. No account required. Powered by Cloudflare's global network infrastructure.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Pages</h4>
+        <ul>
+          <li><a href="index.html">Speed Test</a></li>
+          <li><a href="about.html">About</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="terms-of-use.html">Terms of Use</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 NetSpeed. All rights reserved.</span>
+      <span>
+        <a href="privacy-policy.html">Privacy Policy</a> ·
+        <a href="terms-of-use.html">Terms of Use</a> ·
+        <a href="about.html">About</a>
+      </span>
+    </div>
   </footer>
 
   <script>
@@ -481,8 +544,7 @@
       const arc = document.getElementById('gaugeArc');
       arc.style.strokeDashoffset = offset.toFixed(1);
       if (color) arc.style.stroke = color;
-      const display = val === 0 ? '0' : val < 1 ? val.toFixed(1) : Math.round(val);
-      document.getElementById('gaugeVal').textContent = display;
+      document.getElementById('gaugeVal').textContent = val === 0 ? '0' : val < 1 ? val.toFixed(1) : Math.round(val);
     }
 
     function rateColor(mbps) {
@@ -495,8 +557,7 @@
     function setPhase(active) {
       ['ping', 'dl', 'ul'].forEach((p, i) => {
         const el = document.getElementById('ph-' + p);
-        const phases = ['ping', 'dl', 'ul'];
-        const idx = phases.indexOf(active);
+        const idx = ['ping', 'dl', 'ul'].indexOf(active);
         el.classList.remove('active', 'done');
         if (i < idx) el.classList.add('done');
         if (i === idx) el.classList.add('active');
@@ -511,12 +572,11 @@
 
     let sparkData = [];
     let sparkCtx = null;
-    let dpr = window.devicePixelRatio || 1;
+    const dpr = window.devicePixelRatio || 1;
 
     function initSpark() {
       const canvas = document.getElementById('sparkCanvas');
-      const w = canvas.offsetWidth;
-      canvas.width = w * dpr;
+      canvas.width = canvas.offsetWidth * dpr;
       canvas.height = 56 * dpr;
       sparkCtx = canvas.getContext('2d');
       sparkData = [];
@@ -530,12 +590,10 @@
 
     function drawSpark() {
       if (!sparkCtx || sparkData.length < 2) return;
-      const w = sparkCtx.canvas.width;
-      const h = sparkCtx.canvas.height;
+      const w = sparkCtx.canvas.width, h = sparkCtx.canvas.height;
       sparkCtx.clearRect(0, 0, w, h);
       const max = Math.max(...sparkData, 1);
       const step = w / (sparkData.length - 1);
-
       sparkCtx.beginPath();
       sparkData.forEach((v, i) => {
         const x = i * step;
@@ -547,8 +605,6 @@
       sparkCtx.lineJoin = 'round';
       sparkCtx.lineCap = 'round';
       sparkCtx.stroke();
-
-      // Area fill
       sparkCtx.lineTo(w, h);
       sparkCtx.lineTo(0, h);
       sparkCtx.closePath();
@@ -563,9 +619,7 @@
       for (let i = 0; i < 6; i++) {
         const t0 = performance.now();
         try {
-          await fetch('https://www.cloudflare.com/cdn-cgi/trace?_=' + Date.now(), {
-            mode: 'no-cors', cache: 'no-store'
-          });
+          await fetch('https://www.cloudflare.com/cdn-cgi/trace?_=' + Date.now(), { mode: 'no-cors', cache: 'no-store' });
         } catch (e) {}
         times.push(performance.now() - t0);
         await sleep(100);
@@ -583,67 +637,68 @@
       let totalBytes = 0;
       const t0 = performance.now();
       let running = true;
-
       async function fetchChunk() {
         while (running && (performance.now() - t0) < DURATION) {
           try {
-            const r = await fetch(
-              'https://speed.cloudflare.com/__down?bytes=' + CHUNK + '&_=' + Math.random(),
-              { cache: 'no-store' }
-            );
-            const buf = await r.arrayBuffer();
-            totalBytes += buf.byteLength;
-            const elapsed = (performance.now() - t0) / 1000;
-            onProgress((totalBytes * 8) / (elapsed * 1e6));
+            const r = await fetch('https://speed.cloudflare.com/__down?bytes=' + CHUNK + '&_=' + Math.random(), { cache: 'no-store' });
+            totalBytes += (await r.arrayBuffer()).byteLength;
+            onProgress((totalBytes * 8) / ((performance.now() - t0) / 1000 * 1e6));
           } catch (e) { await sleep(200); }
         }
       }
-
-      await Promise.race([
-        Promise.all([fetchChunk(), fetchChunk(), fetchChunk(), fetchChunk()]),
-        sleep(DURATION + 1000)
-      ]);
+      await Promise.race([Promise.all([fetchChunk(), fetchChunk(), fetchChunk(), fetchChunk()]), sleep(DURATION + 1000)]);
       running = false;
-      const elapsed = (performance.now() - t0) / 1000;
-      return (totalBytes * 8) / (elapsed * 1e6);
+      return (totalBytes * 8) / ((performance.now() - t0) / 1000 * 1e6);
     }
 
     async function measureUpload(onProgress) {
       const DURATION = 6000;
-      const CHUNK = 1024 * 512;
-      const payload = new Uint8Array(CHUNK);
+      const CHUNK = 1024 * 256;
       let totalBytes = 0;
       const t0 = performance.now();
       let running = true;
 
-      async function sendChunk() {
-        while (running && (performance.now() - t0) < DURATION) {
-          try {
-            await fetch('https://speed.cloudflare.com/__up', {
-              method: 'POST',
-              body: payload,
-              headers: { 'Content-Type': 'application/octet-stream' },
-              cache: 'no-store'
-            });
+      function sendOne() {
+        return new Promise((resolve) => {
+          if (!running || (performance.now() - t0) >= DURATION) { resolve(); return; }
+          const xhr = new XMLHttpRequest();
+          const payload = new Uint8Array(CHUNK);
+          xhr.open('POST', 'https://speed.cloudflare.com/__up', true);
+          xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+          xhr.upload.onprogress = (e) => {
+            if (e.lengthComputable) {
+              const partial = totalBytes + e.loaded;
+              const elapsed = (performance.now() - t0) / 1000;
+              if (elapsed > 0) onProgress((partial * 8) / (elapsed * 1e6));
+            }
+          };
+          xhr.onloadend = () => {
             totalBytes += CHUNK;
             const elapsed = (performance.now() - t0) / 1000;
-            onProgress((totalBytes * 8) / (elapsed * 1e6));
-          } catch (e) { await sleep(200); }
+            if (elapsed > 0) onProgress((totalBytes * 8) / (elapsed * 1e6));
+            resolve();
+          };
+          xhr.onerror = () => resolve();
+          xhr.send(payload);
+        });
+      }
+
+      async function worker() {
+        while (running && (performance.now() - t0) < DURATION) {
+          await sendOne();
         }
       }
 
       await Promise.race([
-        Promise.all([sendChunk(), sendChunk(), sendChunk()]),
-        sleep(DURATION + 1000)
+        Promise.all([worker(), worker(), worker()]),
+        sleep(DURATION + 1500)
       ]);
       running = false;
       const elapsed = (performance.now() - t0) / 1000;
-      return (totalBytes * 8) / (elapsed * 1e6);
+      return elapsed > 0 ? (totalBytes * 8) / (elapsed * 1e6) : 0;
     }
 
-    function fmt(v) {
-      return v < 1 ? v.toFixed(1) : Math.round(v);
-    }
+    function fmt(v) { return v < 1 ? v.toFixed(1) : Math.round(v); }
 
     let tickInterval = null;
 
@@ -651,19 +706,12 @@
       const btn = document.getElementById('btnStart');
       btn.disabled = true;
       btn.textContent = '◌  Testing...';
-
-      // Reset UI
-      ['mDl', 'mUl', 'mPing', 'mJitter'].forEach(id => {
-        document.getElementById(id).textContent = '—';
-      });
-      document.getElementById('rcDl').classList.remove('visible');
-      document.getElementById('rcUl').classList.remove('visible');
-      document.getElementById('rcPing').classList.remove('visible');
+      ['mDl', 'mUl', 'mPing', 'mJitter'].forEach(id => document.getElementById(id).textContent = '—');
+      ['rcDl', 'rcUl', 'rcPing'].forEach(id => document.getElementById(id).classList.remove('visible'));
       document.getElementById('gaugeArc').style.stroke = '#3B82F6';
       initSpark();
 
       try {
-        // ── PING ──
         setPhase('ping');
         document.getElementById('gaugeLabel').textContent = 'Measuring latency...';
         document.getElementById('gaugeUnit').textContent = 'ms';
@@ -679,21 +727,18 @@
         donePhase('ping');
         await sleep(400);
 
-        // ── DOWNLOAD ──
         setPhase('dl');
         document.getElementById('gaugeLabel').textContent = 'Measuring download...';
         document.getElementById('gaugeUnit').textContent = 'Mbps';
         document.getElementById('chartPhaseLabel').textContent = 'Download';
         setGauge(0, '#3B82F6');
         sparkData = [];
-
         let dlLive = 0;
         tickInterval = setInterval(() => {
           setGauge(dlLive, rateColor(dlLive));
           pushSpark(dlLive);
           document.getElementById('mDl').textContent = fmt(dlLive);
         }, 150);
-
         const dlFinal = await measureDownload(v => { dlLive = v; });
         clearInterval(tickInterval);
         setGauge(dlFinal, rateColor(dlFinal));
@@ -703,20 +748,17 @@
         donePhase('dl');
         await sleep(400);
 
-        // ── UPLOAD ──
         setPhase('ul');
         document.getElementById('gaugeLabel').textContent = 'Measuring upload...';
         document.getElementById('chartPhaseLabel').textContent = 'Upload';
         setGauge(0, '#22C55E');
         sparkData = [];
-
         let ulLive = 0;
         tickInterval = setInterval(() => {
           setGauge(ulLive, '#22C55E');
           pushSpark(ulLive);
           document.getElementById('mUl').textContent = fmt(ulLive);
         }, 150);
-
         const ulFinal = await measureUpload(v => { ulLive = v; });
         clearInterval(tickInterval);
         setGauge(ulFinal, '#22C55E');
@@ -739,6 +781,5 @@
       btn.textContent = '↺  Test again';
     }
   </script>
-
 </body>
 </html>

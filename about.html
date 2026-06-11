@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About – NetSpeed Internet Speed Test</title>
+  <meta name="description" content="Learn about NetSpeed, a free internet speed test tool that measures download, upload, ping and jitter using Cloudflare's global network.">
+  <meta name="robots" content="index, follow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#0A0A0F;--surface:#111118;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);--text:#E8E8F0;--muted:#6B6B80;--blue:#3B82F6;--radius:12px;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;line-height:1.6;}
+    nav{display:flex;align-items:center;justify-content:space-between;padding:0 5vw;height:58px;border-bottom:1px solid var(--border);}
+    .logo{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1.05rem;color:var(--text);text-decoration:none;}
+    .logo span{color:var(--blue);}
+    .nav-links{display:flex;gap:24px;list-style:none;}
+    .nav-links a{color:var(--muted);text-decoration:none;font-size:0.85rem;transition:color 0.15s;}
+    .nav-links a:hover{color:var(--text);}
+    .container{max-width:720px;margin:0 auto;padding:3rem 5vw;flex:1;}
+    h1{font-size:1.8rem;font-weight:500;letter-spacing:-0.03em;margin-bottom:1rem;}
+    h2{font-size:1.1rem;font-weight:500;margin:2rem 0 0.75rem;}
+    p{color:var(--muted);font-size:0.9rem;line-height:1.8;margin-bottom:1rem;}
+    p:last-child{margin-bottom:0;}
+    .highlight{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin:1.5rem 0;}
+    .highlight p{margin:0;}
+    footer{border-top:1px solid var(--border);padding:1rem 5vw;font-size:0.72rem;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+    footer a{color:var(--muted);text-decoration:none;}
+    footer a:hover{color:var(--text);}
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="logo">net<span>speed</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Speed Test</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="privacy-policy.html">Privacy</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <h1>About NetSpeed</h1>
+    <p>NetSpeed is a free internet speed test tool that lets anyone check their connection's download speed, upload speed, ping, and jitter — instantly, without creating an account or installing anything.</p>
+
+    <div class="highlight">
+      <p>Our tool uses <strong style="color:var(--text)">Cloudflare's global speed measurement infrastructure</strong> to deliver accurate results. By connecting to servers close to your location, we measure real network performance rather than approximations.</p>
+    </div>
+
+    <h2>How the test works</h2>
+    <p>When you click "Start test", our tool runs three sequential measurements:</p>
+    <p><strong style="color:var(--text)">Ping:</strong> We send multiple small requests to a Cloudflare server and measure the round-trip time in milliseconds. We also calculate jitter — the variance between those measurements.</p>
+    <p><strong style="color:var(--text)">Download:</strong> We simultaneously download multiple large data chunks from Cloudflare's network and calculate your transfer rate in Megabits per second (Mbps).</p>
+    <p><strong style="color:var(--text)">Upload:</strong> We send data to Cloudflare's servers using XMLHttpRequest, measuring how quickly your connection can transfer data outbound.</p>
+
+    <h2>Why we built this</h2>
+    <p>Many speed test tools are bloated, slow to load, or require you to create an account. We wanted a fast, clean, and transparent alternative that anyone can use on any device. No trackers beyond what's disclosed in our privacy policy, no pop-ups, no dark patterns.</p>
+
+    <h2>Accuracy and limitations</h2>
+    <p>Results reflect real network conditions at the moment of the test. They can vary based on time of day, server load, your router's hardware, and whether you're testing over Wi-Fi or Ethernet. For best accuracy, close other apps and run the test multiple times at different hours.</p>
+    <p>Upload results in particular may differ from other speed test services due to CORS (Cross-Origin Resource Sharing) browser restrictions. We use XMLHttpRequest to measure upload progress as data is sent, which gives a real measurement of your outbound transfer rate.</p>
+
+    <h2>Contact</h2>
+    <p>For questions, feedback, or issues with the tool, you can reach us at: <a href="mailto:contact@netspeed.example.com" style="color:var(--blue);">contact@netspeed.example.com</a></p>
+    <p style="color:var(--muted);font-size:0.82rem;">Replace this email with your actual contact address before publishing.</p>
+  </div>
+
+  <footer>
+    <span>© 2025 NetSpeed. All rights reserved.</span>
+    <span>
+      <a href="privacy-policy.html">Privacy Policy</a> ·
+      <a href="terms-of-use.html">Terms of Use</a> ·
+      <a href="about.html">About</a>
+    </span>
+  </footer>
+</body>
+</html>
