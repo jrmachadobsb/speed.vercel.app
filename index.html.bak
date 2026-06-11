@@ -4,15 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NetSpeed – Free Internet Speed Test | Check Download & Upload</title>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18081524533"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'AW-18081524533');
-</script>
   <meta name="description" content="Test your internet connection speed for free. Measure download speed, upload speed, ping, and jitter in seconds. No app required.">
   <meta name="robots" content="index, follow">
   <meta property="og:title" content="NetSpeed – Free Internet Speed Test">
